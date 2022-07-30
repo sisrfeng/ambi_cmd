@@ -1,39 +1,37 @@
-*ambicmd.txt*	You can use ambiguous commands.
-
-Version: 0.6.0
-Authors: thinca <thinca+vim@gmail.com>
-         Shougo <Shougo.Matsu (at) gmail.com>
-         tyru   <tyru.exe@gmail.com>
-         mityu  <mityu.email (at) gmail.com>
-License: zlib License
+*ambicmd.txt*   You can use ambiguous commands.
 
 ==============================================================================
-CONTENTS					*ambicmd-contents*
+CONTENTS                    *ambicmd-contents*
 
-INTRODUCTION			|ambicmd-introduction|
-INTERFACE			|ambicmd-interface|
-  FUNCTIONS			  |ambicmd-functions|
-CUSTOMIZING			|ambicmd-customizing|
-EXPANDING RULE			|ambicmd-expanding-rule|
-SETTING EXAMPLES		|ambicmd-setting-examples|
-TODO				|ambicmd-todo|
-CHANGELOG			|ambicmd-changelog|
+INTRODUCTION            |ambicmd-introduction|
+INTERFACE           |ambicmd-interface|
+  FUNCTIONS           |ambicmd-functions|
+CUSTOMIZING         |ambicmd-customizing|
+EXPANDING RULE          |ambicmd-expanding-rule|
+SETTING EXAMPLES        |ambicmd-setting-examples|
+TODO                |ambicmd-todo|
+CHANGELOG           |ambicmd-changelog|
 
 
 
 ==============================================================================
-INTRODUCTION					*ambicmd-introduction*
+INTRODUCTION                    *ambicmd-introduction*
 
 *ambicmd* is a Vim plugin to use ambiguous commands.
-Some plugins provide many useful commands, but sometimes these are very long.
-At this time, you will define the key mappings to execute these. However:
+Some plugins provide many useful commands,
+but sometimes these are very long.
+At this time,
+    you will define the key mappings to execute these.
 
-- You will have to define quite a lot of key mappings.
-- You should find unused key sequences for mapping.
-- Do you define a key mapping for a command only occasionally used?
+However:
 
-This plugin expands ambiguous {command}s into user-defined commands by some
-patterns when they are at:
+    - You will have to define quite a lot of key mappings.
+    - You should find unused key sequences for mapping.
+    - Do you define a key mapping for a command only occasionally used?
+
+This plugin expands ambiguous {command}s into user-defined commands by
+some patterns when they are at:
+
 
 - :{command}
 - :{some-commands}|{command}
@@ -42,81 +40,79 @@ patterns when they are at:
 
 The following are examples of how this plugin expands ambiguous commands when
 you configure this: `:cnoremap <expr> <Space> ambicmd#expand("\<Space>")`
->
-	("|" is cursor)
-	" Expands into the correct name from the lowercase.
-	:ref<Space>  =>  :Ref |
 
-	" Expands from the capital letters of the command.
-	:qr<Space>   =>  :QuickRun |
+    ("|" is cursor)
+    Expands into the correct name from the lowercase.
+            :ref<Space>  =>  :Ref |
 
-	" If there are some commands with "NeoComplCache" prefix, complete it.
-	:ncc<Space>  =>  :NeoComplCache|
-<
+    Expands from the capital letters of the command.
+            :qr<Space>   =>  :QuickRun |
+
+    If there are some commands with "NeoComplCache" prefix,
+    complete it.
+            :ncc<Space>  =>  :NeoComplCache|
+
 See |ambicmd-expanding-rule| about the expanding rule.
-Note that you need write some settings in your vimrc because this plugin does
-nothing by default.  Please see |ambicmd-setting-examples|.
+You need write some settings in your vimrc because this plugin does  nothing by default.
+Please see |ambicmd-setting-examples|.
 
 
-Requirements:
-- Vim 7.3 or later
 
 Latest version:
 https://github.com/thinca/vim-ambicmd
 
 
-
 ==============================================================================
-INTERFACE					*ambicmd-interface*
+INTERFACE                   *ambicmd-interface*
 
 ------------------------------------------------------------------------------
-FUNCTIONS					*ambicmd-functions*
+FUNCTIONS                   *ambicmd-functions*
 
-ambicmd#expand({key-sequence})			*ambicmd#expand()*
-	Expands the command.
-	- If the cursor position is not just behind a command, returns
-	  {key-sequence} directly.
-	- If the command has spaces on its head, returns {key-sequence}
-	  directly too.  (Therefore, you can avoid expanding by putting
-	  spaces.)
-	- If the expanding succeeded, returns the command and {key-sequence}.
-	- If the candidates of the command starts by the same phrase, returns
-	  it and keys to list or show completion.  (See
-	  |g:ambicmd#show_completion_menu| for the details.)
-	- Otherwise returns {key-sequence}.
-	See also |ambicmd-setting-examples|.
-
-
-
-==============================================================================
-CUSTOMIZING					*ambicmd-customizing*
-
-g:ambicmd#build_rule				*g:ambicmd#build_rule*
-	|String| of function name or |Funcref|.  The function takes an inuptted
-	command as argument, and have to return a list of patterns to filter
-	user-defined commands.
-	See |ambicmd-expanding-rule| for the details.
-	The default value is "ambicmd#default_rule".
-
-g:ambicmd#show_completion_menu		*g:ambicmd#show_completion_menu*
-	|Number|.
-	If this value is non-zero:
-	- When you're in command-line with 'wildmenu' enabled, and
-	  'wildcharm' set, 'wildcharm' will be used to show the completion
-	  menu; otherwise, <C-d> will be used instead in the same way as when
-	  this value is zero.  (You have to set 'wildmode' and 'wildcharm'
-	  option to enable this option in command-line.)
-	- When you're in |cmdline-window|, <C-x><C-v> will be used to show the
-	  completion menu.
-	If this value is zero:
-	- When you're in command-line, <C-d> will be used to list completion.
-	- When you're in |cmdline-window|, nothing will be used.
-	The default value is 0.
+ambicmd#expand({key-sequence})          *ambicmd#expand()*
+    Expands the command.
+    - If the cursor position is not just behind a command, returns
+      {key-sequence} directly.
+    - If the command has spaces on its head, returns {key-sequence}
+      directly too.  (Therefore, you can avoid expanding by putting
+      spaces.)
+    - If the expanding succeeded, returns the command and {key-sequence}.
+    - If the candidates of the command starts by the same phrase, returns
+      it and keys to list or show completion.  (See
+      |g:ambicmd#show_completion_menu| for the details.)
+    - Otherwise returns {key-sequence}.
+    See also |ambicmd-setting-examples|.
 
 
 
 ==============================================================================
-EXPANDING RULE					*ambicmd-expanding-rule*
+CUSTOMIZING                 *ambicmd-customizing*
+
+g:ambicmd#build_rule                *g:ambicmd#build_rule*
+    |String| of function name or |Funcref|.  The function takes an inuptted
+    command as argument, and have to return a list of patterns to filter
+    user-defined commands.
+    See |ambicmd-expanding-rule| for the details.
+    The default value is "ambicmd#default_rule".
+
+g:ambicmd#show_completion_menu      *g:ambicmd#show_completion_menu*
+    |Number|.
+    If this value is non-zero:
+    - When you're in command-line with 'wildmenu' enabled, and
+      'wildcharm' set, 'wildcharm' will be used to show the completion
+      menu; otherwise, <C-d> will be used instead in the same way as when
+      this value is zero.  (You have to set 'wildmode' and 'wildcharm'
+      option to enable this option in command-line.)
+    - When you're in |cmdline-window|, <C-x><C-v> will be used to show the
+      completion menu.
+    If this value is zero:
+    - When you're in command-line, <C-d> will be used to list completion.
+    - When you're in |cmdline-window|, nothing will be used.
+    The default value is 0.
+
+
+
+==============================================================================
+EXPANDING RULE                  *ambicmd-expanding-rule*
 
 The rule is a list of |regexp| patterns.  All of user-defined commands are
 filtered by the first pattern.  The pattern matching is done with |=~?|.  If
@@ -129,34 +125,34 @@ Otherwise, nothing is done.
 
 
 ==============================================================================
-SETTING EXAMPLES				*ambicmd-setting-examples*
+SETTING EXAMPLES                *ambicmd-setting-examples*
 
 Expand ambiguous commands with <Space> and <CR>.
->
-	cnoremap <expr> <Space> ambicmd#expand("\<Space>")
-	cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
-<
-Map <C-f> to <Right> with ambicmd.
->
-	cnoremap <expr> <C-f> ambicmd#expand("\<Right>")
->
-Use in |cmdline-window|.
->
-	augroup init_cmdwin
-	  autocmd!
-	  autocmd CmdwinEnter * call s:init_cmdwin()
-	augroup END
-	function! s:init_cmdwin()
-	  inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
-	  inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
 
-	  startinsert!
-	endfunction
-<
+    cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+    cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
+
+Map <C-f> to <Right> with ambicmd.
+
+    cnoremap <expr> <C-f> ambicmd#expand("\<Right>")
+
+Use in |cmdline-window|.
+
+    augroup init_cmdwin
+      autocmd!
+      autocmd CmdwinEnter * call s:init_cmdwin()
+    augroup END
+    function! s:init_cmdwin()
+      inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
+      inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
+
+      startinsert!
+    endfunction
+
 
 
 ==============================================================================
-TODO						*ambicmd-todo*
+TODO                        *ambicmd-todo*
 
 - Improves the expanding rule.
   - Any idea?
@@ -166,39 +162,8 @@ TODO						*ambicmd-todo*
 
 
 
-==============================================================================
-CHANGELOG					*ambicmd-changelog*
-
-0.6.0	2019-05-26
-	- Add many improvements by mityu.  Thanks!
-	  - Support :{some-commands} | {command}
-	  - Support :global/{pattern}/{command}
-	  - Support :execute '{command}'
-	  - Add |g:ambicmd#show_completion_menu|.
-
-0.5.1	2015-02-07
-	- Fix problem in Visual-mode.
-
-0.5.0	2011-12-24
-	- Accepts bang(!) of command.
-
-0.4.0	2011-09-26
-	- Fixed for buffer-local command is not expanded.
-	- Improved the default rule.
-	- Improved some behavior.
-
-0.3.0	2011-08-29
-	- Improved some behavior.
-	- Expands the head of common parts.
-	- Expanding rule was made customizable.
-	- Added this document.
-
-0.2.0	2010-04-04
-	- Supported |cmdline-window|.
-
-0.1.0	2010-04-04
-	- Initial version.
 
 
 ==============================================================================
-vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
+DIY_again
+DIY_2  vim:filetype=help:syntax=help:
